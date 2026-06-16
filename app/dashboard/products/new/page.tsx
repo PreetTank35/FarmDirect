@@ -18,7 +18,7 @@ try {
 
 export default function NewProductPage() {
   const router = useRouter();
-  const { provider, signer, address } = useWeb3();
+  const { provider, signer, address, connect, isConnecting } = useWeb3();
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
