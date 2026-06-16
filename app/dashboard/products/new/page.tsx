@@ -62,7 +62,10 @@ export default function NewProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!vendorId) return setError("Vendor profile not found");
-    if (!address || !signer || !provider) return setError("Please connect MetaMask");
+    if (!address || !signer || !provider) {
+      connect();
+      return;
+    }
     if (!contractData.address) return setError("Smart contract not deployed");
     if (!image) return setError("Please select an image");
 
@@ -225,20 +228,32 @@ export default function NewProductPage() {
           </div>
 
           <div className={styles.footer}>
-            <button
-              type="submit"
-              disabled={loading || !vendorId}
-              className={styles.submitBtn}
-            >
-              {loading ? (
-                <>
-                  <div className={styles.spinner}></div>
-                  Listing...
-                </>
-              ) : (
-                "List Product"
-              )}
-            </button>
+            {!address ? (
+              <button
+                type="button"
+                onClick={connect}
+                disabled={isConnecting}
+                className={styles.submitBtn}
+                style={{ background: '#f6851b', color: 'white', border: 'none' }}
+              >
+                {isConnecting ? "Connecting..." : "🦊 Connect MetaMask"}
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading || !vendorId}
+                className={styles.submitBtn}
+              >
+                {loading ? (
+                  <>
+                    <div className={styles.spinner}></div>
+                    Listing...
+                  </>
+                ) : (
+                  "List Product"
+                )}
+              </button>
+            )}
           </div>
         </form>
       </div>

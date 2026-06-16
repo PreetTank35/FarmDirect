@@ -5,22 +5,25 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function testInsert() {
-  const testId = '00000000-0000-0000-0000-000000000000';
-  const { data, error } = await supabase.from('profiles').insert({
-    id: testId,
-    full_name: 'Test Profile',
-    role: 'customer'
-  });
+async function testCreateUser() {
+  const email = `admin_test_${Date.now()}@example.com`;
+  console.log("Admin testing signup for:", email);
   
+  const { data, error } = await supabase.auth.admin.createUser({
+    email: email,
+    password: 'Password123!',
+    email_confirm: false,
+    user_metadata: {
+      full_name: 'Admin Test Seller',
+      role: 'vendor'
+    }
+  });
+
   if (error) {
-    console.error("PROFILES INSERT ERROR:", JSON.stringify(error, null, 2));
+    console.error("ADMIN SIGNUP ERROR:", JSON.stringify(error, null, 2));
   } else {
-    console.log("PROFILES INSERT SUCCESS");
-    
-    // Clean up
-    await supabase.from('profiles').delete().eq('id', testId);
+    console.log("ADMIN SIGNUP SUCCESS:", data.user?.id);
   }
 }
 
-testInsert();
+testCreateUser();
