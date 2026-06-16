@@ -6,6 +6,8 @@ import { createBrowserClient } from "@supabase/ssr";
 import { useWeb3 } from "@/components/web3/Web3Provider";
 import { ethers } from "ethers";
 
+import styles from "./productNew.module.css";
+
 // Fallback empty contract data if not deployed yet
 let contractData = { address: "", abi: [] };
 try {
@@ -117,109 +119,107 @@ export default function NewProductPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 py-12 px-4 sm:px-6">
-      <div className="max-w-2xl mx-auto glass animate-fade-in-up rounded-3xl p-8 sm:p-10 shadow-lg border border-white/40">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">List a New Product</h1>
-          <p className="text-gray-500">Add your fresh produce to the blockchain marketplace.</p>
+    <div className={styles.page}>
+      <div className={`${styles.container} animate-fade-in-up`}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>List a New Product</h1>
+          <p className={styles.subtitle}>Add your fresh produce to the blockchain marketplace.</p>
         </div>
         
         {error && (
-          <div className="mb-8 p-4 bg-red-50/80 border border-red-100 text-red-700 rounded-xl text-sm animate-fade-in">
+          <div className={styles.error}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="group">
-            <label className="block text-sm font-semibold text-gray-700 mb-2 transition-colors group-focus-within:text-green-600">Product Title</label>
+        <form onSubmit={handleSubmit}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Product Title</label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-5 py-3 bg-white/60 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+              className={styles.input}
               placeholder="e.g. Organic Honey 500g"
             />
           </div>
 
-          <div className="group">
-            <label className="block text-sm font-semibold text-gray-700 mb-2 transition-colors group-focus-within:text-green-600">Description</label>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Description</label>
             <textarea
               required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              rows={4}
               maxLength={500}
-              className="w-full px-5 py-3 bg-white/60 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all resize-none"
+              className={`${styles.input} ${styles.textarea}`}
               placeholder="Describe your product (100-500 characters)"
             />
-            <p className="text-xs text-gray-400 mt-2 text-right font-medium">{description.length}/500</p>
+            <p style={{ textAlign: 'right', fontSize: '12px', color: 'var(--color-neutral-500)', marginTop: '4px' }}>
+              {description.length}/500
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="group">
-              <label className="block text-sm font-semibold text-gray-700 mb-2 transition-colors group-focus-within:text-green-600">Price (ETH)</label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">Ξ</span>
-                <input
-                  type="number"
-                  required
-                  step="0.0001"
-                  min="0"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  className="w-full pl-10 pr-5 py-3 bg-white/60 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
-                  placeholder="0.05"
-                />
-              </div>
+          <div className={styles.grid}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Price (ETH)</label>
+              <input
+                type="number"
+                required
+                step="0.0001"
+                min="0"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className={styles.input}
+                placeholder="0.05"
+              />
             </div>
-            <div className="group">
-              <label className="block text-sm font-semibold text-gray-700 mb-2 transition-colors group-focus-within:text-green-600">Stock Quantity</label>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Stock Quantity</label>
               <input
                 type="number"
                 required
                 min="1"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
-                className="w-full px-5 py-3 bg-white/60 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
+                className={styles.input}
                 placeholder="10"
               />
             </div>
           </div>
 
-          <div className="group">
-            <label className="block text-sm font-semibold text-gray-700 mb-2 transition-colors group-focus-within:text-green-600">Product Image</label>
-            <div className="relative border-2 border-dashed border-gray-300 rounded-2xl p-6 bg-white/40 hover:bg-white/60 transition-colors text-center group-focus-within:border-green-500 group-focus-within:bg-green-50/30">
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Product Image</label>
+            <div className={styles.fileArea}>
               <input
                 type="file"
                 required
                 accept="image/png, image/jpeg, image/jpg"
                 onChange={(e) => setImage(e.target.files?.[0] || null)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                className={styles.fileInput}
               />
-              <div className="pointer-events-none">
-                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-600 mb-3">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div style={{ pointerEvents: 'none' }}>
+                <div className={styles.fileIcon}>
+                  <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                </span>
-                <p className="text-sm font-medium text-gray-900">{image ? image.name : "Click to upload or drag and drop"}</p>
-                <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+                </div>
+                <p className={styles.fileName}>{image ? image.name : "Click to upload or drag and drop"}</p>
+                <p className={styles.fileSub}>PNG, JPG up to 5MB</p>
               </div>
             </div>
           </div>
 
-          <div className="pt-8 mt-8 border-t border-gray-200/60">
+          <div className={styles.footer}>
             <button
               type="submit"
               disabled={loading || !vendorId}
-              className="w-full sm:w-auto sm:ml-auto px-8 py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-lg hover:shadow-green-500/30 active:translate-y-0"
+              className={styles.submitBtn}
             >
               {loading ? (
                 <>
-                  <span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                  Listing on Blockchain...
+                  <div className={styles.spinner}></div>
+                  Listing...
                 </>
               ) : (
                 "List Product"
