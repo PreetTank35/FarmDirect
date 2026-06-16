@@ -4,14 +4,9 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.
 async function checkProducts() {
   const { data, error } = await supabase
     .from("products")
-    .select(`
-      *,
-      vendor_profiles ( business_name, description, location ),
-      reviews (
-        id, rating, comment, created_at, profiles ( full_name )
-      )
-    `)
-    .eq("id", "2a625dff-a0fb-4939-9105-e4a72682dce7")
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1)
     .single();
   if (error) console.error(error);
   console.log(JSON.stringify(data, null, 2));
