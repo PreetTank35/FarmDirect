@@ -13,16 +13,6 @@ export async function POST(request: Request) {
     const data = new FormData();
     data.append("file", file);
 
-    const pinataMetadata = JSON.stringify({
-      name: file.name || "Product Image",
-    });
-    data.append("pinataMetadata", pinataMetadata);
-
-    const pinataOptions = JSON.stringify({
-      cidVersion: 1, // Using CID v1
-    });
-    data.append("pinataOptions", pinataOptions);
-
     const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
       method: "POST",
       headers: {
