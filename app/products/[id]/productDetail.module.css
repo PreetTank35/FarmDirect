@@ -176,6 +176,7 @@
   font-weight: var(--weight-black);
   background: linear-gradient(to right, var(--color-primary-600), var(--color-primary-800));
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
   letter-spacing: var(--tracking-tight);
   line-height: 1;
