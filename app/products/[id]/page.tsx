@@ -6,7 +6,7 @@ import BuyNowButton from "@/components/products/BuyNowButton";
 import { MapPin, ShieldCheck, Star } from "lucide-react";
 import styles from "./productDetail.module.css";
 
-export const revalidate = 0; // ensure fresh data
+export const dynamic = "force-dynamic";
 
 export default async function ProductDetailPage({
   params,

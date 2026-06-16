@@ -63,12 +63,15 @@ contract FarmDirectMarketplace {
         return productCount;
     }
 
-    function buyProduct(uint256 _productId) external payable returns (uint256) {
+    function buyProduct(uint256 _productId, uint256 _amount) external payable returns (uint256) {
         Product memory _product = products[_productId];
         
         require(_product.id > 0, "Product does not exist");
         require(_product.isActive, "Product is not active");
-        require(msg.value >= _product.price, "Insufficient funds sent");
+        require(_amount > 0, "Amount must be greater than zero");
+        
+        uint256 totalPrice = _product.price * _amount;
+        require(msg.value >= totalPrice, "Insufficient funds sent");
         require(msg.sender != _product.seller, "Seller cannot buy own product");
 
         // Transfer funds directly to the seller
@@ -83,11 +86,11 @@ contract FarmDirectMarketplace {
             _productId,
             msg.sender,
             _product.seller,
-            msg.value,
+            _amount,
             false
         );
 
-        emit ProductPurchased(orderCount, _productId, msg.sender, _product.seller, msg.value);
+        emit ProductPurchased(orderCount, _productId, msg.sender, _product.seller, _amount);
 
         return orderCount;
     }

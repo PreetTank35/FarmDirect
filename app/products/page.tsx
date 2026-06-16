@@ -5,7 +5,7 @@ import { Search, MapPin, Star } from "lucide-react";
 
 import styles from "./marketplace.module.css";
 
-export const revalidate = 0; // Disable static rendering for this page to always show fresh products
+export const dynamic = "force-dynamic";
 
 export default async function MarketplacePage({
   searchParams,
