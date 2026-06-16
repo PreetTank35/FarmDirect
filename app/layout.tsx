@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Web3Provider } from "@/components/web3/Web3Provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,9 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+        <Web3Provider>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </Web3Provider>
       </body>
     </html>
   );

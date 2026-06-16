@@ -1,0 +1,242 @@
+{
+  "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "abi": [
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "OrderDelivered",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orderId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "buyer",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "seller",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "ProductListed",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "id",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "seller",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "price",
+          "indexed": false
+        },
+        {
+          "type": "string",
+          "name": "originMetadataCID",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "ProductPurchased",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orderId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "productId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "buyer",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "seller",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "buyProduct",
+      "constant": false,
+      "stateMutability": "payable",
+      "payable": true,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_productId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "confirmDelivery",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orderId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "listProduct",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_price"
+        },
+        {
+          "type": "string",
+          "name": "_originMetadataCID"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "orderCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "orders",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "id"
+        },
+        {
+          "type": "uint256",
+          "name": "productId"
+        },
+        {
+          "type": "address",
+          "name": "buyer"
+        },
+        {
+          "type": "address",
+          "name": "seller"
+        },
+        {
+          "type": "uint256",
+          "name": "amount"
+        },
+        {
+          "type": "bool",
+          "name": "isDelivered"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "productCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "products",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": ""
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "id"
+        },
+        {
+          "type": "address",
+          "name": "seller"
+        },
+        {
+          "type": "uint256",
+          "name": "price"
+        },
+        {
+          "type": "bool",
+          "name": "isActive"
+        },
+        {
+          "type": "string",
+          "name": "originMetadataCID"
+        }
+      ]
+    }
+  ]
+}
