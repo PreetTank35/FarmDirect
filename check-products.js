@@ -11,7 +11,7 @@ async function checkProducts() {
         id, rating, comment, created_at, profiles ( full_name )
       )
     `)
-    .eq("id", "58255041-7360-442b-8a91-09a107196314")
+    .eq("id", "2a625dff-a0fb-4939-9105-e4a72682dce7")
     .single();
   if (error) console.error(error);
   console.log(JSON.stringify(data, null, 2));
