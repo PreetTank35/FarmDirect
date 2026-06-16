@@ -92,7 +92,20 @@ export default function NewProductPage() {
       const priceWei = ethers.parseEther(price);
       
       const tx = await contract.listProduct(priceWei, ipfsCid);
-      await tx.wait(); // Wait for confirmation
+      const receipt = await tx.wait(); // Wait for confirmation
+      
+      let smartContractProductId = 1;
+      try {
+        const event = receipt.logs.find((log: any) => {
+          try { return contract.interface.parseLog({ topics: [...log.topics], data: log.data })?.name === "ProductListed"; } catch { return false; }
+        });
+        if (event) {
+          const parsedLog = contract.interface.parseLog({ topics: [...event.topics], data: event.data });
+          smartContractProductId = Number(parsedLog?.args[0]);
+        }
+      } catch (e) {
+        console.warn("Could not parse ProductListed event", e);
+      }
       
       // 3. Save to Supabase DB
       const { error: dbError } = await supabase
@@ -105,7 +118,8 @@ export default function NewProductPage() {
           currency: "ETH",
           stock_quantity: parseInt(stock),
           image_urls: [imageUrl],
-          ipfs_origin_cid: ipfsCid
+          ipfs_origin_cid: ipfsCid,
+          origin_metadata: { smartContractProductId }
         });
 
       if (dbError) throw new Error("Database error: " + dbError.message);

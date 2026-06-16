@@ -66,10 +66,11 @@ export default function BuyNowButton({
       // 2. Call Smart Contract
       const contract = new ethers.Contract(contractData.address, contractData.abi, signer);
       const priceWei = ethers.parseEther(totalEth.toString());
+      const scProductId = product.origin_metadata?.smartContractProductId || 1;
       
       let txHash;
       try {
-        const tx = await contract.buyProduct(1, quantity, { value: priceWei });
+        const tx = await contract.buyProduct(scProductId, quantity, { value: priceWei });
         const receipt = await tx.wait();
         txHash = receipt.hash;
       } catch (err: any) {
