@@ -115,7 +115,7 @@ export default function BuyNowButton({
       <button
         onClick={handleBuy}
         disabled={loading}
-        className="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+        className="w-full py-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition-all duration-300 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl hover:shadow-green-500/40 active:translate-y-0 active:scale-95 border border-green-400/30"
       >
         {loading ? (
           <span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
