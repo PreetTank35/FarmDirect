@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ui/Toast";
 import Button from "@/components/ui/Button";
@@ -26,13 +26,17 @@ const ROLE_OPTIONS: { value: Role; icon: string; label: string; description: str
   },
 ];
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showToast } = useToast();
   const supabase = createClient();
 
-  const [step, setStep] = useState<1 | 2>(1);
-  const [role, setRole] = useState<Role>("customer");
+  const roleParam = searchParams.get("role");
+  const initialRole = roleParam === "vendor" ? "vendor" : "customer";
+
+  const [step, setStep] = useState<1 | 2>(roleParam ? 2 : 1);
+  const [role, setRole] = useState<Role>(initialRole);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -337,5 +341,27 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.page}>
+        <div className={styles.left}>
+          <div className={styles.logo}>
+            <span className={styles.logoIcon}>🌱</span>
+            <span className={styles.logoText}>
+              Farm<span className={styles.logoAccent}>Direct</span>
+            </span>
+          </div>
+        </div>
+        <div className={styles.right} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className={styles.spinner} style={{ width: '40px', height: '40px' }} />
+        </div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }

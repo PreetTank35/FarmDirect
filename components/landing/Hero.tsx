@@ -1,11 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import styles from "./Hero.module.css";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 
 export default function Hero() {
+  const router = useRouter();
+  const supabase = createClient();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+  }, [supabase]);
+
+  const handleStartShopping = () => {
+    if (user) {
+      router.push("/products");
+    } else {
+      router.push("/register?role=customer");
+    }
+  };
+
+  const handleStartSelling = () => {
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      router.push("/register?role=vendor");
+    }
+  };
   return (
     <section className={styles.hero} id="hero">
       {/* Animated background blobs */}
@@ -38,10 +65,10 @@ export default function Hero() {
           </p>
 
           <div className={styles.actions}>
-            <Button variant="primary" size="xl">
+            <Button variant="primary" size="xl" onClick={handleStartShopping} id="hero-start-shopping-btn">
               Start Shopping
             </Button>
-            <Button variant="outline" size="xl">
+            <Button variant="outline" size="xl" onClick={handleStartSelling} id="hero-sell-products-btn">
               Sell Your Products
             </Button>
           </div>

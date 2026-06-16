@@ -1,4 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import styles from "./ForSellers.module.css";
 import Button from "@/components/ui/Button";
 
@@ -38,6 +42,24 @@ const ORDERS = [
 ];
 
 export default function ForSellers() {
+  const router = useRouter();
+  const supabase = createClient();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+  }, [supabase]);
+
+  const handleStartSelling = () => {
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      router.push("/register?role=vendor");
+    }
+  };
+
   return (
     <section className={`section ${styles.section}`} id="for-sellers">
       <div className={`container ${styles.inner}`}>
@@ -65,7 +87,7 @@ export default function ForSellers() {
           </div>
 
           <div className={styles.cta}>
-            <Button variant="primary" size="lg">
+            <Button variant="primary" size="lg" onClick={handleStartSelling} id="for-sellers-start-btn">
               Start Selling Today →
             </Button>
           </div>

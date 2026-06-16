@@ -45,24 +45,38 @@ CREATE TABLE IF NOT EXISTS profiles (
   updated_at               TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Auto-create profile on user signup
+-- Auto-create profile and vendor profile on user signup
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+  v_role user_role;
 BEGIN
+  v_role := COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'customer'::user_role);
+
   INSERT INTO profiles (id, full_name, role)
   VALUES (
     NEW.id,
     NEW.raw_user_meta_data->>'full_name',
-    COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'customer')
+    v_role
   );
+
+  IF v_role = 'vendor'::user_role THEN
+    INSERT INTO vendor_profiles (user_id, business_name, business_type)
+    VALUES (
+      NEW.id,
+      COALESCE(NEW.raw_user_meta_data->>'business_name', NEW.raw_user_meta_data->>'full_name', 'My Business'),
+      COALESCE((NEW.raw_user_meta_data->>'business_type')::business_type, 'farmer'::business_type)
+    );
+  END IF;
+
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
 -- ============================================================
 -- VENDOR PROFILES

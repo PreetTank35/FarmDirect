@@ -1,8 +1,38 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import styles from "./FinalCTA.module.css";
 import Button from "@/components/ui/Button";
 
 export default function FinalCTA() {
+  const router = useRouter();
+  const supabase = createClient();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+  }, [supabase]);
+
+  const handleStartShopping = () => {
+    if (user) {
+      router.push("/products");
+    } else {
+      router.push("/register?role=customer");
+    }
+  };
+
+  const handleBecomeSeller = () => {
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      router.push("/register?role=vendor");
+    }
+  };
+
   return (
     <section className={`${styles.section}`} id="final-cta">
       {/* Animated blobs */}
@@ -27,10 +57,12 @@ export default function FinalCTA() {
         </p>
 
         <div className={styles.actions}>
-          <Button variant="primary" size="xl">
+          <Button variant="primary" size="xl" onClick={handleStartShopping} id="final-cta-shopping-btn">
             Start Shopping
           </Button>
-          <button className={styles.outlineWhite}>Become a Seller</button>
+          <button className={styles.outlineWhite} onClick={handleBecomeSeller} id="final-cta-seller-btn">
+            Become a Seller
+          </button>
         </div>
 
         <p className={styles.trust}>
