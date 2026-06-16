@@ -1,5 +1,11 @@
 // Vercel redeploy trigger
 import { NextResponse } from "next/server";
+import { PinataSDK } from "pinata-web3";
+
+const pinata = new PinataSDK({
+  pinataJwt: process.env.PINATA_JWT || "",
+  pinataGateway: process.env.NEXT_PUBLIC_PINATA_GATEWAY?.replace("https://", "") || "gateway.pinata.cloud",
+});
 
 export async function POST(request: Request) {
   try {
@@ -10,38 +16,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const blob = new Blob([arrayBuffer], { type: file.type });
-
-    const data = new FormData();
-    data.append("file", blob, file.name || "upload.png");
-
-    const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.PINATA_JWT}`,
-      },
-      body: data as any,
-    });
-
-    const resData = await res.json();
-    
-    if (!res.ok) {
-      console.error("Pinata Error Details:", resData);
-      return NextResponse.json({ error: "Pinata upload failed" }, { status: 500 });
-    }
+    // Use official SDK which natively handles Node/Next.js streams safely
+    const upload = await pinata.upload.file(file);
 
     const gatewayUrl = process.env.NEXT_PUBLIC_PINATA_GATEWAY 
-      ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${resData.IpfsHash}`
-      : `https://gateway.pinata.cloud/ipfs/${resData.IpfsHash}`;
+      ? `${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${upload.IpfsHash}`
+      : `https://gateway.pinata.cloud/ipfs/${upload.IpfsHash}`;
 
     return NextResponse.json({ 
-      cid: resData.IpfsHash,
+      cid: upload.IpfsHash,
       gatewayUrl: gatewayUrl
     });
 
   } catch (error: any) {
     console.error("IPFS Upload Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to upload to Pinata" }, { status: 500 });
   }
 }
