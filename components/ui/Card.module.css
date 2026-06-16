@@ -1,0 +1,78 @@
+.card {
+  border-radius: var(--radius-xl);
+  transition: all var(--duration-normal) var(--ease-default);
+  position: relative;
+}
+
+/* --- Padding --- */
+.pad-none { padding: 0; }
+.pad-sm { padding: var(--space-4); }
+.pad-md { padding: var(--space-6); }
+.pad-lg { padding: var(--space-8); }
+
+/* --- Variants --- */
+.default {
+  background: var(--color-neutral-0);
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-md);
+}
+
+.outlined {
+  background: transparent;
+  border: 2px solid var(--color-neutral-200);
+}
+
+.elevated {
+  background: var(--color-neutral-0);
+  border: 1px solid var(--color-neutral-100);
+  box-shadow: var(--shadow-lg);
+}
+
+.gradient {
+  background: linear-gradient(135deg, var(--color-primary-50), var(--color-accent-50));
+  border: 1px solid var(--color-primary-100);
+}
+
+/* --- Hover --- */
+.hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.hover.glass:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Clickable --- */
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:active {
+  transform: scale(0.98);
+}
+
+/* --- Sub-components --- */
+.header {
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-neutral-100);
+  margin-bottom: var(--space-4);
+}
+
+.content {
+  flex: 1;
+}
+
+.footer {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-neutral-100);
+  margin-top: var(--space-4);
+}

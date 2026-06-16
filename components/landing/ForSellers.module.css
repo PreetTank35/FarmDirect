@@ -1,0 +1,292 @@
+.section {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-primary-50) 0%, var(--color-neutral-0) 100%);
+}
+
+.section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(at 10% 90%, rgba(16, 185, 129, 0.08) 0, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(245, 158, 11, 0.05) 0, transparent 50%);
+  pointer-events: none;
+}
+
+/* --- Layout --- */
+.inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+  align-items: center;
+  position: relative;
+}
+
+/* --- Left: Benefits --- */
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.benefitsHeader {
+  margin-bottom: var(--space-2);
+}
+
+.benefitsHeader h2 {
+  margin-bottom: var(--space-3);
+}
+
+.benefitsHeader p {
+  font-size: var(--text-base);
+  color: var(--color-neutral-500);
+  line-height: var(--leading-relaxed);
+}
+
+/* --- Benefit Card --- */
+.benefitList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.benefit {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: var(--color-neutral-0);
+  border: 1px solid var(--color-neutral-200);
+  transition: all var(--duration-normal) var(--ease-spring);
+}
+
+.benefit:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-200);
+}
+
+.benefitCheck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+.benefitText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.benefitTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  color: var(--color-neutral-900);
+}
+
+.benefitDesc {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-500);
+  line-height: var(--leading-relaxed);
+}
+
+.cta {
+  margin-top: var(--space-4);
+}
+
+/* --- Right: Dashboard Mockup --- */
+.dashboard {
+  position: relative;
+  border-radius: var(--radius-2xl);
+  background: var(--color-neutral-0);
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: var(--shadow-2xl);
+  overflow: hidden;
+}
+
+.dashboardBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-neutral-100);
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.dashboardDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dashboardDot:nth-child(1) { background: #ef4444; }
+.dashboardDot:nth-child(2) { background: #f59e0b; }
+.dashboardDot:nth-child(3) { background: #10b981; }
+
+.dashboardTitle {
+  margin-left: var(--space-3);
+  font-size: 0.75rem;
+  color: var(--color-neutral-500);
+  font-weight: var(--weight-medium);
+}
+
+.dashboardBody {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* --- Dashboard Mini Cards --- */
+.dashRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.dashCard {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-100);
+}
+
+.dashCardLabel {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--color-neutral-400);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  margin-bottom: var(--space-1);
+}
+
+.dashCardValue {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-neutral-900);
+}
+
+.dashCardTrend {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: var(--weight-semibold);
+  margin-top: var(--space-1);
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.trendUp {
+  color: var(--color-primary-700);
+  background: var(--color-primary-50);
+}
+
+/* --- Dashboard Chart Placeholder --- */
+.dashChart {
+  height: 120px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--color-primary-50), var(--color-accent-50));
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+  padding: var(--space-3);
+}
+
+.chartBar {
+  flex: 1;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: linear-gradient(180deg, var(--color-primary-400), var(--color-primary-600));
+  opacity: 0.7;
+  transition: opacity var(--duration-fast);
+}
+
+.chartBar:hover {
+  opacity: 1;
+}
+
+/* --- Dashboard Orders List --- */
+.dashOrders {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dashOrdersTitle {
+  font-size: 0.8rem;
+  font-weight: var(--weight-semibold);
+  color: var(--color-neutral-700);
+  margin-bottom: var(--space-1);
+}
+
+.dashOrder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-neutral-50);
+  border: 1px solid var(--color-neutral-100);
+  font-size: 0.8rem;
+}
+
+.orderProduct {
+  font-weight: var(--weight-medium);
+  color: var(--color-neutral-700);
+}
+
+.orderStatus {
+  font-size: 0.7rem;
+  font-weight: var(--weight-semibold);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.statusDelivered {
+  color: var(--color-primary-700);
+  background: var(--color-primary-50);
+}
+
+.statusShipped {
+  color: var(--color-accent-700);
+  background: var(--color-accent-50);
+}
+
+.statusNew {
+  color: var(--color-info);
+  background: var(--color-info-light);
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+
+  .dashboard {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashRow {
+    grid-template-columns: 1fr;
+  }
+
+  .benefit {
+    padding: var(--space-4);
+  }
+}
