@@ -51,19 +51,41 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className={styles.comingSoon}>
-          <div className={styles.comingSoonIcon}>🚧</div>
-          <h2>Dashboard Coming Soon</h2>
-          <p>
-            Your personalized {role === "vendor" ? "seller" : "shopper"} dashboard is being built.
-            Phase 3 (Marketplace) and beyond will unlock your full dashboard experience.
-          </p>
-          <div className={styles.quickLinks}>
-            <Link href="/" className={styles.quickLink}>
-              ← Back to Home
-            </Link>
+        <div className={styles.dashboardGrid}>
+          {role === "vendor" ? (
+            <>
+              <div className={styles.card}>
+                <h3>Sell a Product</h3>
+                <p>List a new product on the blockchain marketplace.</p>
+                <Link href="/dashboard/products/new" className={styles.quickLink}>
+                  Add New Product →
+                </Link>
+              </div>
+              <div className={styles.card}>
+                <h3>Your Sales</h3>
+                <p>View and manage orders placed by customers.</p>
+                <Link href="/dashboard/orders" className={styles.quickLink}>
+                  View Orders →
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.card}>
+                <h3>My Purchases</h3>
+                <p>Track the status of your marketplace orders.</p>
+                <Link href="/dashboard/orders" className={styles.quickLink}>
+                  View Orders →
+                </Link>
+              </div>
+            </>
+          )}
+
+          <div className={styles.card}>
+            <h3>Marketplace</h3>
+            <p>Browse products listed by farmers across the network.</p>
             <Link href="/products" className={styles.quickLink}>
-              Browse Products →
+              Browse Marketplace →
             </Link>
           </div>
         </div>
