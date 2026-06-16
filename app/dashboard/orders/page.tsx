@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { Package, ExternalLink, Star } from "lucide-react";
 import Link from "next/link";
+import ReviewForm from "@/components/reviews/ReviewForm";
 import styles from "./orders.module.css";
 
 export default function OrdersPage() {
