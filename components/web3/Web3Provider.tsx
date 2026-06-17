@@ -76,7 +76,8 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
     setError(null);
 
     try {
-      const _provider = new ethers.BrowserProvider(ethereum);
+      // Use staticNetwork to prevent ethers from aggressively polling eth_blockNumber and eth_chainId
+      const _provider = new ethers.BrowserProvider(ethereum, "any", { staticNetwork: true });
       await _provider.send("eth_requestAccounts", []);
       
       const _signer = await _provider.getSigner();
@@ -88,7 +89,10 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
       setAddress(_address);
       setChainId(Number(network.chainId));
 
-      if (Number(network.chainId) !== 31337) {
+      // Allow Hardhat (31337) and Sepolia Testnet (11155111)
+      const currentChainId = Number(network.chainId);
+      if (currentChainId !== 31337 && currentChainId !== 11155111) {
+        // Default to Hardhat if they are on an unsupported network
         await switchToHardhatNetwork();
       }
 
