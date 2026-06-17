@@ -31,7 +31,7 @@ export default function BuyNowButton({
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const totalEth = (product.price * quantity).toFixed(4);
+  const totalEth = (product.price * quantity).toFixed(2);
 
   const handleDecrease = () => {
     if (quantity > 1) setQuantity(q => q - 1);
@@ -144,7 +144,7 @@ export default function BuyNowButton({
         ) : (
           <ShoppingBag size={24} />
         )}
-        {loading ? "Processing..." : !address ? "Connect Wallet to Buy" : `Buy Now for ${totalEth} ETH`}
+        {loading ? "Processing..." : !address ? "Connect Wallet to Buy" : `Buy Now for ₹${totalEth}`}
       </button>
       {error && <p className={styles.error}>{error}</p>}
     </div>

@@ -130,7 +130,7 @@ export default function OrdersPage() {
                   </div>
                   <div className={styles.detailRow}>
                     <span className={styles.detailLabel}>Total</span>
-                    <span className={styles.totalValue}>{order.total} ETH</span>
+                    <span className={styles.totalValue}>₹{order.total}</span>
                   </div>
                 </div>
 
