@@ -97,12 +97,18 @@ export default function BuyNowButton({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.warn(
-          "Contract buy failed, falling back to direct transfer.",
+          "Contract buy failed, attempting fallback to direct transfer.",
           err
         );
-        const sellerAddress =
-          product.vendor_profiles?.custodial_wallet_address ||
-          contractData.address;
+        
+        const sellerAddress = product.vendor_profiles?.custodial_wallet_address;
+        
+        if (!sellerAddress) {
+          throw new Error(
+            "Transaction failed: Product might not be listed on the current network's smart contract, and the seller has no direct wallet address configured."
+          );
+        }
+
         const tx = await signer.sendTransaction({
           to: sellerAddress,
           value: priceWei,
