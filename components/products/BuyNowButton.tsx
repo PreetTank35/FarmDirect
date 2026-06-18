@@ -159,15 +159,14 @@ export default function BuyNowButton({
       if (itemError)
         throw new Error("Order items save failed: " + itemError.message);
 
-      // 4. Decrease stock quantity in the database
-      const newStock = Math.max(0, (product.stock_quantity || 0) - quantity);
-      const { error: stockError } = await supabase
-        .from("products")
-        .update({ stock_quantity: newStock })
-        .eq("id", product.id);
+      // 4. Decrease stock quantity in the database using RPC to bypass RLS
+      const { error: stockError } = await supabase.rpc("decrement_product_stock", {
+        p_id: product.id,
+        p_quantity: quantity
+      });
 
       if (stockError) {
-        console.warn("Failed to update stock quantity:", stockError);
+        console.warn("Failed to update stock quantity via RPC:", stockError);
       }
 
       alert("Purchase Successful! 🎉");
