@@ -286,7 +286,10 @@ export default function NewProductPage() {
         contractData.abi,
         signer
       );
-      const priceWei = ethers.parseEther(price);
+      
+      // Convert INR to ETH (approx rate for MVP demo: 1 ETH = ₹300,000)
+      const priceInEth = (parseFloat(price) / 300000).toFixed(6);
+      const priceWei = ethers.parseEther(priceInEth.toString());
 
       const tx = await contract.listProduct(priceWei, firstCid);
       const receipt = await tx.wait();

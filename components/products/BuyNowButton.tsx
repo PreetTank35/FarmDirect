@@ -74,7 +74,11 @@ export default function BuyNowButton({
         contractData.abi,
         signer
       );
-      const priceWei = ethers.parseEther(totalEth.toString());
+      
+      // Convert INR to ETH (approx rate for MVP demo: 1 ETH = ₹300,000)
+      const priceInEth = (parseFloat(totalEth) / 300000).toFixed(6);
+      const priceWei = ethers.parseEther(priceInEth.toString());
+      
       const scProductId =
         product.origin_metadata?.smartContractProductId || 1;
 
