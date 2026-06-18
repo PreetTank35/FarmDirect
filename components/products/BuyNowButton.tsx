@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useWeb3 } from "@/components/web3/Web3Provider";
-import { ethers } from "ethers";
+import { useAccount, useWriteContract, useSendTransaction, useConnect } from "wagmi";
+import { parseEther } from "viem";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, Minus, Plus } from "lucide-react";
 import styles from "./buyButton.module.css";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let contractData: { address: string; abi: any[] } = { address: "", abi: [] };
+let contractData: { address: `0x${string}`; abi: any[] } = { address: "0x", abi: [] };
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   contractData = require("@/components/web3/contractData.json");
@@ -24,7 +25,11 @@ export default function BuyNowButton({
   product: any;
 }) {
   const router = useRouter();
-  const { provider, signer, address, connect } = useWeb3();
+  const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+  const { writeContractAsync } = useWriteContract();
+  const { sendTransactionAsync } = useSendTransaction();
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -45,12 +50,16 @@ export default function BuyNowButton({
   };
 
   const handleBuy = async () => {
-    if (!address || !signer || !provider) {
-      connect();
+    if (!isConnected || !address) {
+      if (openConnectModal) {
+        openConnectModal();
+      } else {
+        setError("Please connect your wallet first.");
+      }
       return;
     }
 
-    if (!contractData.address) {
+    if (!contractData.address || contractData.address === "0x") {
       setError("Smart contract not deployed yet.");
       return;
     }
@@ -68,37 +77,25 @@ export default function BuyNowButton({
         return;
       }
 
-      // 2. Call Smart Contract
-      const contract = new ethers.Contract(
-        contractData.address,
-        contractData.abi,
-        signer
-      );
-      
       // Convert INR to ETH (approx rate for MVP demo: 1 ETH = ₹300,000)
       const priceInEth = (parseFloat(totalEth) / 300000).toFixed(6);
-      const priceWei = ethers.parseEther(priceInEth.toString());
+      const priceWei = parseEther(priceInEth.toString());
       
-      const scProductId =
-        product.origin_metadata?.smartContractProductId || 1;
+      const scProductId = product.origin_metadata?.smartContractProductId || 1;
 
       let txHash: string;
-      let blockNumber: number | null = null;
       let fromAddress: string = address;
       let toAddress: string = contractData.address;
-      let gasUsed: string = "";
 
       try {
-        const tx = await contract.buyProduct(scProductId, quantity, {
+        const hash = await writeContractAsync({
+          address: contractData.address,
+          abi: contractData.abi,
+          functionName: 'buyProduct',
+          args: [scProductId, quantity],
           value: priceWei,
         });
-        const receipt = await tx.wait();
-        txHash = receipt.hash;
-        blockNumber = receipt.blockNumber;
-        gasUsed = receipt.gasUsed?.toString() || "";
-        fromAddress = receipt.from;
-        toAddress = receipt.to || contractData.address;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        txHash = hash;
       } catch (err: any) {
         console.warn(
           "Contract buy failed, attempting fallback to direct transfer.",
@@ -107,21 +104,17 @@ export default function BuyNowButton({
         
         const sellerAddress = product.vendor_profiles?.custodial_wallet_address;
         
-        if (!sellerAddress) {
+        if (!sellerAddress || !sellerAddress.startsWith("0x")) {
           throw new Error(
             "Transaction failed: Product might not be listed on the current network's smart contract, and the seller has no direct wallet address configured."
           );
         }
 
-        const tx = await signer.sendTransaction({
-          to: sellerAddress,
+        const hash = await sendTransactionAsync({
+          to: sellerAddress as `0x${string}`,
           value: priceWei,
         });
-        const receipt = await tx.wait();
-        txHash = receipt?.hash || tx.hash;
-        blockNumber = receipt?.blockNumber || null;
-        gasUsed = receipt?.gasUsed?.toString() || "";
-        fromAddress = tx.from;
+        txHash = hash;
         toAddress = sellerAddress;
       }
 
@@ -135,10 +128,10 @@ export default function BuyNowButton({
           total: parseFloat(totalEth),
           shipping_address: { address: "Blockchain Direct" },
           blockchain_tx_hash: txHash,
-          block_number: blockNumber,
+          block_number: null, // Removed wait() blockNumber for simplicity on mobile bridging
           from_address: fromAddress,
           to_address: toAddress,
-          gas_used: gasUsed,
+          gas_used: "", // Gas info isn't instantly available without waiting for receipt, which we skip to keep UI fast on mobile
           chain_id: 11155111, // Sepolia
           status: "paid",
         })

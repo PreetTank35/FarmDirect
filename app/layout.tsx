@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { Web3Provider } from "@/components/web3/Web3Provider";
+import { WagmiProviderSetup } from "@/components/web3/WagmiProviderSetup";
 
 export default function RootLayout({
   children,
@@ -34,11 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Web3Provider>
+        <WagmiProviderSetup>
           <ToastProvider>
             {children}
           </ToastProvider>
-        </Web3Provider>
+        </WagmiProviderSetup>
       </body>
     </html>
   );
