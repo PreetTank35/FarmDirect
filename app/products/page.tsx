@@ -16,6 +16,7 @@ import {
   Filter,
 } from "lucide-react";
 import FreshnessIndicator from "@/components/products/FreshnessIndicator";
+import BackButton from "@/components/ui/BackButton";
 import styles from "./marketplace.module.css";
 
 const SORT_OPTIONS = [
@@ -206,6 +207,9 @@ export default function MarketplacePage() {
       <div className={styles.header}>
         <div className={styles.headerContainer}>
           <div>
+            <div style={{ marginBottom: '1rem' }}>
+              <BackButton fallback="/dashboard" label="Back to Dashboard" />
+            </div>
             <div className={styles.badge}>
               <span className={styles.pulseWrap}>
                 <span className={styles.pulseBg}></span>

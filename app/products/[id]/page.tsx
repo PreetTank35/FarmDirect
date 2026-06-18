@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import BuyNowButton from "@/components/products/BuyNowButton";
 import FreshnessIndicator from "@/components/products/FreshnessIndicator";
+import BackButton from "@/components/ui/BackButton";
+import DeleteProductButton from "@/components/products/DeleteProductButton";
 import {
   MapPin,
   ShieldCheck,
@@ -38,12 +40,14 @@ export default async function ProductDetailPage({
     }
   );
 
+  const { data: { user } } = await supabase.auth.getUser();
+
   const { data: product, error } = await supabase
     .from("products")
     .select(
       `
       *,
-      vendor_profiles ( business_name, description, location, business_type, rating_avg, verified ),
+      vendor_profiles ( user_id, business_name, description, location, business_type, rating_avg, verified ),
       categories ( name, slug ),
       reviews (
         id, rating, comment, created_at, profiles ( full_name )
@@ -170,22 +174,28 @@ export default async function ProductDetailPage({
 
   return (
     <div className={styles.page}>
-      {/* Breadcrumb */}
-      <div className={styles.breadcrumb}>
-        <div className={styles.breadcrumbInner}>
-          <Link href="/products" className={styles.breadcrumbLink}>
-            Marketplace
-          </Link>
-          <ChevronRight size={14} className={styles.breadcrumbSep} />
-          {product.categories?.name && (
-            <>
-              <span className={styles.breadcrumbLink}>
-                {product.categories.name}
-              </span>
-              <ChevronRight size={14} className={styles.breadcrumbSep} />
-            </>
+      {/* Top Bar / Breadcrumb */}
+      <div className={styles.topBar}>
+        <div className={styles.topBarInner}>
+          <div className={styles.breadcrumbInner}>
+            <BackButton fallback="/products" label="Back to Marketplace" />
+            <ChevronRight size={14} className={styles.breadcrumbSep} />
+            {product.categories?.name && (
+              <>
+                <span className={styles.breadcrumbLink}>
+                  {product.categories.name}
+                </span>
+                <ChevronRight size={14} className={styles.breadcrumbSep} />
+              </>
+            )}
+            <span className={styles.breadcrumbCurrent}>{product.title}</span>
+          </div>
+          
+          {user && user.id === product.vendor_profiles?.user_id && (
+            <div className={styles.ownerActions}>
+              <DeleteProductButton productId={product.id} productTitle={product.title} />
+            </div>
           )}
-          <span className={styles.breadcrumbCurrent}>{product.title}</span>
         </div>
       </div>
 

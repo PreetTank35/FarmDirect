@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 import { useWeb3 } from "@/components/web3/Web3Provider";
 import { ethers } from "ethers";
+import BackButton from "@/components/ui/BackButton";
 import {
   Package,
   DollarSign,
@@ -377,6 +378,9 @@ export default function NewProductPage() {
       <div className={`${styles.container} animate-fade-in-up`}>
         {/* Header */}
         <div className={styles.header}>
+          <div style={{ marginBottom: "1rem", textAlign: "left" }}>
+            <BackButton fallback="/dashboard" label="Back to Dashboard" />
+          </div>
           <div className={styles.headerBadge}>
             <Leaf size={16} />
             Seller Dashboard

@@ -6,6 +6,7 @@ import { Package, ExternalLink, Star, QrCode } from "lucide-react";
 import Link from "next/link";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import QRCodeModal from "@/components/web3/QRCodeModal";
+import BackButton from "@/components/ui/BackButton";
 import styles from "./orders.module.css";
 
 export default function OrdersPage() {
@@ -107,6 +108,9 @@ export default function OrdersPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
+        <div style={{ marginBottom: "1rem" }}>
+          <BackButton fallback="/dashboard" label="Back to Dashboard" />
+        </div>
         <div className={styles.header}>
           <div className={styles.iconWrap}>
             <Package size={28} strokeWidth={2.5} />

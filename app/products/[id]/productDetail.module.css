@@ -4,21 +4,37 @@
 }
 
 /* ========== BREADCRUMB ========== */
-.breadcrumb {
-  background: var(--color-neutral-0);
-  border-bottom: 1px solid var(--color-neutral-200);
-  padding: var(--space-3) 0;
+.topBar {
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-neutral-100);
+  background: white;
+  margin-bottom: var(--space-6);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topBarInner {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .breadcrumbInner {
-  max-width: var(--container-xl);
-  margin: 0 auto;
-  padding: 0 var(--space-6);
   display: flex;
   align-items: center;
   gap: var(--space-2);
   font-size: 13px;
   font-weight: var(--weight-medium);
+}
+
+.ownerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .breadcrumbLink {
