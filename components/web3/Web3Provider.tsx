@@ -67,7 +67,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const connect = async () => {
+  async function connect() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { ethereum } = window as any;
     if (!ethereum) {
@@ -79,8 +79,8 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
     setError(null);
 
     try {
-      // Initialize BrowserProvider correctly for ethers v6 without invalid 'any' network and staticNetwork configuration
-      const _provider = new ethers.BrowserProvider(ethereum);
+      // Initialize BrowserProvider with staticNetwork to prevent aggressive polling of eth_blockNumber (preventing rate limit errors)
+      const _provider = new ethers.BrowserProvider(ethereum, undefined, { staticNetwork: true });
       await _provider.send("eth_requestAccounts", []);
       
       const _signer = await _provider.getSigner();
@@ -106,9 +106,9 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsConnecting(false);
     }
-  };
+  }
 
-  const switchToNetwork = async (targetChainId: number) => {
+  async function switchToNetwork(targetChainId: number) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { ethereum } = window as any;
     if (!ethereum) return;
@@ -166,14 +166,14 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
         console.error("Failed to switch network", switchError);
       }
     }
-  };
+  }
 
-  const disconnect = () => {
+  function disconnect() {
     setProvider(null);
     setSigner(null);
     setAddress(null);
     setChainId(null);
-  };
+  }
 
   return (
     <Web3Context.Provider value={{ provider, signer, address, chainId, connect, disconnect, isConnecting, error }}>
