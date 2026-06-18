@@ -33,20 +33,7 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const { ethereum } = window as any;
-    if (ethereum) {
-      ethereum.on('accountsChanged', handleAccountsChanged);
-      ethereum.on('chainChanged', handleChainChanged);
-      
-      return () => {
-        ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        ethereum.removeListener('chainChanged', handleChainChanged);
-      };
-    }
-  }, []);
-
-  const handleAccountsChanged = async (accounts: string[]) => {
+  async function handleAccountsChanged(accounts: string[]) {
     if (accounts.length === 0) {
       disconnect();
     } else if (accounts[0] !== address) {
@@ -58,14 +45,30 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
         connect();
       }
     }
-  };
+  }
 
-  const handleChainChanged = (chainIdHex: string) => {
+  function handleChainChanged(chainIdHex: string) {
     setChainId(parseInt(chainIdHex, 16));
     window.location.reload();
-  };
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { ethereum } = window as any;
+    if (ethereum) {
+      ethereum.on('accountsChanged', handleAccountsChanged);
+      ethereum.on('chainChanged', handleChainChanged);
+      
+      return () => {
+        ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        ethereum.removeListener('chainChanged', handleChainChanged);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const connect = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { ethereum } = window as any;
     if (!ethereum) {
       setError("Please install MetaMask!");
@@ -76,8 +79,8 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
     setError(null);
 
     try {
-      // Use staticNetwork to prevent ethers from aggressively polling eth_blockNumber and eth_chainId
-      const _provider = new ethers.BrowserProvider(ethereum, "any", { staticNetwork: true });
+      // Initialize BrowserProvider correctly for ethers v6 without invalid 'any' network and staticNetwork configuration
+      const _provider = new ethers.BrowserProvider(ethereum);
       await _provider.send("eth_requestAccounts", []);
       
       const _signer = await _provider.getSigner();
@@ -92,10 +95,11 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
       // Allow Hardhat (31337) and Sepolia Testnet (11155111)
       const currentChainId = Number(network.chainId);
       if (currentChainId !== 31337 && currentChainId !== 11155111) {
-        // Default to Hardhat if they are on an unsupported network
-        await switchToHardhatNetwork();
+        // Default to Sepolia if they are on an unsupported network
+        await switchToNetwork(11155111);
       }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Failed to connect wallet");
@@ -104,34 +108,62 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const switchToHardhatNetwork = async () => {
+  const switchToNetwork = async (targetChainId: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { ethereum } = window as any;
+    if (!ethereum) return;
+
+    const hexChainId = "0x" + targetChainId.toString(16);
+
     try {
       await ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x7A69' }], // 31337 in hex
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: hexChainId }],
       });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (switchError: any) {
+      // Code 4902 indicates that the chain has not been added to MetaMask
       if (switchError.code === 4902) {
         try {
-          await ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [
-              {
-                chainId: '0x7A69',
-                chainName: 'Hardhat Localhost',
-                rpcUrls: ['http://127.0.0.1:8545'],
-                nativeCurrency: {
-                  name: 'Ethereum',
-                  symbol: 'ETH',
-                  decimals: 18,
+          if (targetChainId === 31337) {
+            await ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: hexChainId,
+                  chainName: "Hardhat Localhost",
+                  rpcUrls: ["http://127.0.0.1:8545"],
+                  nativeCurrency: {
+                    name: "Ethereum",
+                    symbol: "ETH",
+                    decimals: 18,
+                  },
                 },
-              },
-            ],
-          });
+              ],
+            });
+          } else if (targetChainId === 11155111) {
+            await ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: hexChainId,
+                  chainName: "Sepolia Test Network",
+                  rpcUrls: ["https://rpc.sepolia.org"],
+                  nativeCurrency: {
+                    name: "Sepolia Ether",
+                    symbol: "ETH",
+                    decimals: 18,
+                  },
+                  blockExplorerUrls: ["https://sepolia.etherscan.io"],
+                },
+              ],
+            });
+          }
         } catch (addError) {
-          console.error("Failed to add hardhat network", addError);
+          console.error("Failed to add network", addError);
         }
+      } else {
+        console.error("Failed to switch network", switchError);
       }
     }
   };
